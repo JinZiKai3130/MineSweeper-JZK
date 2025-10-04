@@ -1,0 +1,4 @@
+/mnt/e/GIT/MineSweeper-JZK/src/build/CMakeFiles/server.dir
+/mnt/e/GIT/MineSweeper-JZK/src/build/CMakeFiles/client.dir
+/mnt/e/GIT/MineSweeper-JZK/src/build/CMakeFiles/edit_cache.dir
+/mnt/e/GIT/MineSweeper-JZK/src/build/CMakeFiles/rebuild_cache.dir
