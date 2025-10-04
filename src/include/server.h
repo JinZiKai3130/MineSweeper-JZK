@@ -15,7 +15,10 @@ int columns;      // The count of columns of the game map. You MUST NOT modify i
 int total_mines;  // The count of mines of the game map. You MUST NOT modify its name. You should initialize this
                   // variable in function InitMap. It will be used in the advanced task.
 int game_state;  // The state of the game, 0 for continuing, 1 for winning, -1 for losing. You MUST NOT modify its name.
-
+char mine_map[35][35]; // the map
+bool vis[35][35]; // whether the block is visited
+int visit_count, marked_mine_count; // The count of the visited block
+int wrong_r, wrong_c; // the place where you got wrong
 /**
  * @brief The definition of function InitMap()
  *
@@ -31,6 +34,12 @@ int game_state;  // The state of the game, 0 for continuing, 1 for winning, -1 f
 void InitMap() {
   std::cin >> rows >> columns;
   // TODO (student): Implement me!
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < columns; j++) {
+      std::cin >> mine_map[i][j];
+      if (mine_map[i][j] == 'X') total_mines++;
+    }
+  }
 }
 
 /**
@@ -65,6 +74,38 @@ void InitMap() {
  */
 void VisitBlock(int r, int c) {
   // TODO (student): Implement me!
+  int dx[15] = {-1, 0, 1, -1, 0, 
+                1, -1, 0, 1};
+  int dy[15] = {-1, -1, -1, 0, 0, 
+                0, 1, 1, 1};
+  if (vis[r][c]) return ;
+  if (mine_map[r][c] == '.') { // normal visit
+    int cnt = 0;
+    vis[r][c] = 1;
+    visit_count++;
+    for (int i = 0; i < 9; i++) {
+      if (mine_map[r + dx[i]][c + dy[i]] == 'X' ||
+          mine_map[r + dx[i]][c + dy[i]] == '@' )
+        cnt++;
+    }
+    mine_map[r][c] = char(cnt + (int)'0');
+    if (mine_map[r][c] == '0') {
+      for (int i = 0; i < 9; i++) {
+        VisitBlock (r + dx[i], c + dy[i]);
+      }
+    }
+    game_state = 0;
+  }
+  else if (mine_map[r][c] == 'X') { //wrong visit
+    game_state = -1;
+    wrong_c = c;
+    wrong_r = r;
+  }
+  else { // invalid operation
+    game_state = 0;
+  }
+  if (rows * columns - visit_count == total_mines) game_state = 1;
+  return ;
 }
 
 /**
@@ -102,6 +143,20 @@ void VisitBlock(int r, int c) {
  */
 void MarkMine(int r, int c) {
   // TODO (student): Implement me!
+  if (mine_map[r][c] == 'X') { // correctly mark the mine
+    mine_map[r][c] = '@';
+    marked_mine_count++;
+    game_state = 0;
+  }
+  else if(mine_map[r][c] == '.') { // wrongly mark the mine
+    mine_map[r][c] = 'X';
+    game_state = -1;
+    wrong_c = c;
+    wrong_r = r;
+  }
+  else { // invalid operation (mark the visited place)
+    game_state = 0;
+  }
 }
 
 /**
@@ -122,6 +177,26 @@ void MarkMine(int r, int c) {
  */
 void AutoExplore(int r, int c) {
   // TODO (student): Implement me!
+  int dx[15] = {-1, 0, 1, -1, 0, 1, -1, 0, 1};
+  int dy[15] = {-1, -1, -1, 0, 0, 0, 1, 1, 1}; 
+  int cnt = 0;
+  if (!vis[r][c]) return ;
+  for (int i = 0; i < 9; i++) {
+    if (mine_map[r + dx[i]][c + dy[i]] == '@') { // the mine count
+      cnt++;
+    }
+  }
+  if (cnt == int(mine_map[r][c] - '0')) {
+    for (int i = 0; i < 9; i++) {
+      if (mine_map[r + dx[i]][c + dy[i]] != '@') { // valid AutoExplore
+        VisitBlock (r + dx[i], c + dy[i]);
+      }
+    }
+    return ;
+  }
+  else { //invalid AutoExplore
+    return ;
+  }
 }
 
 /**
@@ -135,6 +210,16 @@ void AutoExplore(int r, int c) {
  */
 void ExitGame() {
   // TODO (student): Implement me!
+  if (game_state == 1) { // you win
+    std::cout << "YOU WIN!" << std::endl;
+    std::cout << visit_count << " " 
+              << total_mines << std::endl;
+  }
+  else { // game over
+    std::cout << "GAME OVER!" << std::endl;
+    std::cout << visit_count << " " 
+              << marked_mine_count << std::endl;
+  }
   exit(0);  // Exit the game immediately
 }
 
@@ -164,6 +249,50 @@ void ExitGame() {
  */
 void PrintMap() {
   // TODO (student): Implement me!
+  if (game_state == 0)
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < columns; j++) {
+      if (vis[i][j] || mine_map[i][j] == '@') {
+        std::cout << mine_map[i][j];
+      }
+      else {
+        std::cout << "?";
+      }
+    }
+    std::cout << std::endl;
+  }
+  else if (game_state == 1){
+    for (int i = 0; i < rows; i++) {
+      for (int j = 0; j < columns; j++) {
+        if (mine_map[i][j] == 'X' || mine_map[i][j] == '@') {
+            std::cout << "@";
+        }
+        else {
+          std::cout << mine_map[i][j];
+        }
+      }
+      std::cout << std::endl;
+    }
+  }
+  else {
+    for (int i = 0; i < rows; i++) {
+      for (int j = 0; j < columns; j++) {
+        if (mine_map[i][j] == '@') {
+          std::cout << "@";
+        }
+        else if (i == wrong_r && j == wrong_c) {
+          std::cout << "X";
+        }
+        else if (vis[i][j]){
+          std::cout << mine_map[i][j];
+        }
+        else {
+          std::cout << '?';
+        }
+      }
+      std::cout << std::endl;
+    }
+  }
 }
 
 #endif
