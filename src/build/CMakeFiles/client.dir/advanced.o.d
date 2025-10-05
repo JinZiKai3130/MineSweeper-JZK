@@ -158,8 +158,8 @@ CMakeFiles/client.dir/advanced.o: \
  /usr/include/c++/13/bits/sstream.tcc \
  /mnt/e/GIT/MineSweeper-JZK/src/include/client.h \
  /usr/include/c++/13/utility /usr/include/c++/13/bits/stl_relops.h \
- /mnt/e/GIT/MineSweeper-JZK/src/include/generator.h \
- /usr/include/c++/13/random /usr/include/c++/13/cmath /usr/include/math.h \
+ /usr/include/c++/13/ctime /usr/include/c++/13/random \
+ /usr/include/c++/13/cmath /usr/include/math.h \
  /usr/include/x86_64-linux-gnu/bits/math-vector.h \
  /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
  /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h \
@@ -193,4 +193,5 @@ CMakeFiles/client.dir/advanced.o: \
  /usr/include/c++/13/bits/stl_numeric.h \
  /usr/include/c++/13/pstl/glue_numeric_defs.h \
  /usr/include/c++/13/pstl/execution_defs.h \
+ /mnt/e/GIT/MineSweeper-JZK/src/include/generator.h \
  /mnt/e/GIT/MineSweeper-JZK/src/include/server.h
