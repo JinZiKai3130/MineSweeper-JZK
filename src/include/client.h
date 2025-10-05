@@ -80,9 +80,10 @@ void Decide() {
                 0, 1, 1, 1};
   bool flag = 0;
   // std::cout << "start to decide" << std::endl;
+  // locked space
   for (int i = 0; i < rows; i++) {
     for (int j = 0; j < columns; j++) {
-      if (client_map[i][j] == '?') continue ;
+      if (client_map[i][j] == '?' || flag) continue ;
       int mine_blocks = 0, unknown_blocks = 0, next_r, next_c;
       bool visited = 1;
       for (int k = 0; k < 9; k++) {
@@ -105,13 +106,16 @@ void Decide() {
       }
     }
   }
+/*
+  // minus formula
   int d0x[5] = {0, 0 , -1, 1}, d0y[5] = {1, -1 , 0, 0};
-  for (int i = 0; i < rows - 1; i++) { // minus formula
+  for (int i = 0; i < rows - 1; i++) {
     for (int j = 0; j < columns - 1; j++) {
       if (client_map[i][j] == '?' || client_map[i][j] == '@') continue;
       for (int k = 0; k < 5; k++) {
         int mine_blocks_1 = 0, unknown_blocks_1 = 0;
         int mine_blocks_2 = 0, unknown_blocks_2 = 0;
+        int unvisited_r, unvisited_c;
         if (client_map[i + d0x[k]][j + d0y[k]] == '?' || client_map[i + d0x[k]][j + d0y[k]] == '@')
         continue; // unable to use minus formula
         if (k > 1) { // row
@@ -119,13 +123,13 @@ void Decide() {
           if (client_map[i - d0x[k]][j - d0y[k]] == '?') unknown_blocks_1++;
           if (client_map[i - d0x[k]][j - d0y[k] - 1] == '?') unknown_blocks_1++;
           if (client_map[i - d0x[k]][j - d0y[k] + 1] == '@') mine_blocks_1++;
-          if (client_map[i - d0x[k]][j - d0y[k]] == '@') unknown_blocks_1++;
+          if (client_map[i - d0x[k]][j - d0y[k]] == '@') mine_blocks_1++;
           if (client_map[i - d0x[k]][j - d0y[k] - 1] == '@') mine_blocks_1++;
           if (client_map[i + 2 * d0x[k]][j - d0y[k] + 1] == '?') unknown_blocks_2++;
           if (client_map[i + 2 * d0x[k]][j - d0y[k]] == '?') unknown_blocks_2++;
           if (client_map[i + 2 * d0x[k]][j - d0y[k] - 1] == '?') unknown_blocks_2++;
           if (client_map[i + 2 * d0x[k]][j - d0y[k] + 1] == '@') mine_blocks_2++;
-          if (client_map[i + 2 * d0x[k]][j - d0y[k]] == '@') unknown_blocks_2++;
+          if (client_map[i + 2 * d0x[k]][j - d0y[k]] == '@') mine_blocks_2++;
           if (client_map[i + 2 * d0x[k]][j - d0y[k] - 1] == '@') mine_blocks_2++;
         }
         else { // column
@@ -133,7 +137,7 @@ void Decide() {
           if (client_map[i - d0x[k]][j - d0y[k]] == '?') unknown_blocks_1++;
           if (client_map[i - d0x[k] - 1][j - d0y[k]] == '?') unknown_blocks_1++;
           if (client_map[i - d0x[k] + 1][j - d0y[k]] == '@') mine_blocks_1++;
-          if (client_map[i - d0x[k]][j - d0y[k]] == '@') unknown_blocks_1++;
+          if (client_map[i - d0x[k]][j - d0y[k]] == '@') mine_blocks_1++;
           if (client_map[i - d0x[k] - 1][j - d0y[k]] == '@') mine_blocks_1++;
           if (client_map[i + d0x[k] + 1][j + 2 * d0y[k]] == '?') unknown_blocks_2++;
           if (client_map[i - d0x[k]][j + 2 * d0y[k]] == '?') unknown_blocks_2++;
@@ -143,20 +147,32 @@ void Decide() {
           if (client_map[i + d0x[k] - 1][j + 2 * d0y[k]] == '@') mine_blocks_2++;
         }
         if (client_map[i][j] == client_map[i + d0x[k]][j + d0y[k]]) { // the two sides are the same
-          if (mine_blocks_1 == mine_blocks_2) {
-
+          if (unknown_blocks_2 == 0) {
+            if (k > 1) {
+              if (client_map[i - d0x[k]][j - d0y[k] + 1] == '?') Execute(i - d0x[k], j - d0y[k] + 1, 0);
+              else if (client_map[i - d0x[k]][j - d0y[k]] == '?') Execute(i - d0x[k], j - d0y[k], 0);
+              else if (client_map[i - d0x[k]][j - d0y[k] - 1] == '?') Execute(i - d0x[k], j - d0y[k] - 1, 0);
+            }
+            else {
+              if (client_map[i - d0x[k] + 1][j - d0y[k]] == '?') Execute(i - d0x[k] + 1, j - d0y[k], 0);
+              else if (client_map[i - d0x[k]][j - d0y[k]] == '?') Execute(i - d0x[k], j - d0y[k], 0);
+              else if (client_map[i - d0x[k] - 1][j - d0y[k]] == '?') Execute(i - d0x[k] - 1, j - d0y[k], 0);
+            }
+          }
+          else if (unknown_blocks_1 < unknown_blocks_2) {
+            //if (unknown_blocks_2 - unknown_blocks_1 <= (int)client_map[i][j] - client_map[i + d0x[k]][j + d0y[k]])
           }
         }
-        else if (client_map[i][j] >= client_map[i + d0x[k]][j + d0y[k]]) {
+        else if (client_map[i][j] > client_map[i + d0x[k]][j + d0y[k]]) { // the original one is bigger
 
         }
-        else {
+        else { // the latter one is bigger
 
         }
       }
     }
   }
-
+*/
 
   std::srand(std::time(0)); // random
   while (!flag) { // random block
