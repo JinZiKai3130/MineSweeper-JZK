@@ -3,12 +3,16 @@
 
 #include <iostream>
 #include <utility>
+#include <ctime>
+#include <random>
 
 extern int rows;         // The count of rows of the game map.
 extern int columns;      // The count of columns of the game map.
 extern int total_mines;  // The count of mines of the game map.
 
 // You MUST NOT use any other external variables except for rows, columns and total_mines.
+
+char client_map[105][105];
 
 /**
  * @brief The definition of function Execute(int, int, bool)
@@ -52,6 +56,11 @@ void InitGame() {
  */
 void ReadMap() {
   // TODO (student): Implement me!
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < columns; j++) {
+      std::cin >> client_map[i][j];
+    }
+  }
 }
 
 /**
@@ -65,6 +74,41 @@ void Decide() {
   // while (true) {
   //   Execute(0, 0);
   // }
+  int dx[15] = {-1, 0, 1, -1, 0, 
+                1, -1, 0, 1};
+  int dy[15] = {-1, -1, -1, 0, 0, 
+                0, 1, 1, 1};
+  bool flag = 0;
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < columns; j++) {
+      int mine_blocks = 0, unknown_blocks = 0, next_r, next_c;
+      for (int k = 0; k < 9; k++) {
+        if (client_map[i + dx[k]][j + dy[k]] == '@') mine_blocks++;
+        if (client_map[i + dx[k]][j + dy[k]] == '?') {
+          unknown_blocks++;
+          next_r = i + dx[k];
+          next_c = j + dy[k];
+        }
+      }
+      if (mine_blocks == int(client_map[i][j] - '0')) {
+        Execute(i, j, 2);
+        flag = 1;
+      }
+      else if (mine_blocks + unknown_blocks == int(client_map[i][j] - '0')) {
+        Execute(next_r, next_c, 1);
+        flag = 1;
+      }
+    }
+  }
+  std::srand(std::time(0));
+  while (!flag) { // random block
+    int random_r = std::rand() % rows;
+    int random_c = std::rand() % columns;
+    if (client_map[random_r][random_c] == '?') {
+      flag = 1;
+      Execute(random_r, random_c, 0);
+    }
+  }
 }
 
 #endif
