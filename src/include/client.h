@@ -79,28 +79,86 @@ void Decide() {
   int dy[15] = {-1, -1, -1, 0, 0, 
                 0, 1, 1, 1};
   bool flag = 0;
+  // std::cout << "start to decide" << std::endl;
   for (int i = 0; i < rows; i++) {
     for (int j = 0; j < columns; j++) {
+      if (client_map[i][j] == '?') continue ;
       int mine_blocks = 0, unknown_blocks = 0, next_r, next_c;
+      bool visited = 1;
       for (int k = 0; k < 9; k++) {
         if (client_map[i + dx[k]][j + dy[k]] == '@') mine_blocks++;
         if (client_map[i + dx[k]][j + dy[k]] == '?') {
           unknown_blocks++;
+          visited = 0;
           next_r = i + dx[k];
           next_c = j + dy[k];
         }
       }
-      if (mine_blocks == int(client_map[i][j] - '0')) {
+      if (visited) continue;
+      if (mine_blocks == int(client_map[i][j] - '0')) { // auto explore available
         Execute(i, j, 2);
         flag = 1;
       }
-      else if (mine_blocks + unknown_blocks == int(client_map[i][j] - '0')) {
+      else if (mine_blocks + unknown_blocks == int(client_map[i][j] - '0')) { // marking available
         Execute(next_r, next_c, 1);
         flag = 1;
       }
     }
   }
-  std::srand(std::time(0));
+  int d0x[5] = {0, 0 , -1, 1}, d0y[5] = {1, -1 , 0, 0};
+  for (int i = 0; i < rows - 1; i++) { // minus formula
+    for (int j = 0; j < columns - 1; j++) {
+      if (client_map[i][j] == '?' || client_map[i][j] == '@') continue;
+      for (int k = 0; k < 5; k++) {
+        int mine_blocks_1 = 0, unknown_blocks_1 = 0;
+        int mine_blocks_2 = 0, unknown_blocks_2 = 0;
+        if (client_map[i + d0x[k]][j + d0y[k]] == '?' || client_map[i + d0x[k]][j + d0y[k]] == '@')
+        continue; // unable to use minus formula
+        if (k > 1) { // row
+          if (client_map[i - d0x[k]][j - d0y[k] + 1] == '?') unknown_blocks_1++;
+          if (client_map[i - d0x[k]][j - d0y[k]] == '?') unknown_blocks_1++;
+          if (client_map[i - d0x[k]][j - d0y[k] - 1] == '?') unknown_blocks_1++;
+          if (client_map[i - d0x[k]][j - d0y[k] + 1] == '@') mine_blocks_1++;
+          if (client_map[i - d0x[k]][j - d0y[k]] == '@') unknown_blocks_1++;
+          if (client_map[i - d0x[k]][j - d0y[k] - 1] == '@') mine_blocks_1++;
+          if (client_map[i + 2 * d0x[k]][j - d0y[k] + 1] == '?') unknown_blocks_2++;
+          if (client_map[i + 2 * d0x[k]][j - d0y[k]] == '?') unknown_blocks_2++;
+          if (client_map[i + 2 * d0x[k]][j - d0y[k] - 1] == '?') unknown_blocks_2++;
+          if (client_map[i + 2 * d0x[k]][j - d0y[k] + 1] == '@') mine_blocks_2++;
+          if (client_map[i + 2 * d0x[k]][j - d0y[k]] == '@') unknown_blocks_2++;
+          if (client_map[i + 2 * d0x[k]][j - d0y[k] - 1] == '@') mine_blocks_2++;
+        }
+        else { // column
+          if (client_map[i - d0x[k] + 1][j - d0y[k]] == '?') unknown_blocks_1++;
+          if (client_map[i - d0x[k]][j - d0y[k]] == '?') unknown_blocks_1++;
+          if (client_map[i - d0x[k] - 1][j - d0y[k]] == '?') unknown_blocks_1++;
+          if (client_map[i - d0x[k] + 1][j - d0y[k]] == '@') mine_blocks_1++;
+          if (client_map[i - d0x[k]][j - d0y[k]] == '@') unknown_blocks_1++;
+          if (client_map[i - d0x[k] - 1][j - d0y[k]] == '@') mine_blocks_1++;
+          if (client_map[i + d0x[k] + 1][j + 2 * d0y[k]] == '?') unknown_blocks_2++;
+          if (client_map[i - d0x[k]][j + 2 * d0y[k]] == '?') unknown_blocks_2++;
+          if (client_map[i + d0x[k] - 1][j + 2 * d0y[k]] == '?') unknown_blocks_2++;
+          if (client_map[i + d0x[k] + 1][j + 2 * d0y[k]] == '@') mine_blocks_2++;
+          if (client_map[i + d0x[k]][j + 2 * d0y[k]] == '@') mine_blocks_2++;
+          if (client_map[i + d0x[k] - 1][j + 2 * d0y[k]] == '@') mine_blocks_2++;
+        }
+        if (client_map[i][j] == client_map[i + d0x[k]][j + d0y[k]]) { // the two sides are the same
+          if (mine_blocks_1 == mine_blocks_2) {
+
+          }
+        }
+        else if (client_map[i][j] >= client_map[i + d0x[k]][j + d0y[k]]) {
+
+        }
+        else {
+
+        }
+      }
+    }
+  }
+
+
+  std::srand(std::time(0)); // random
   while (!flag) { // random block
     int random_r = std::rand() % rows;
     int random_c = std::rand() % columns;

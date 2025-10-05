@@ -33,6 +33,7 @@ void Execute(int row, int column, int type) {
       return;
     }
   }
+  // std::cout << "Execute: row=" << row << ", col=" << column << ", type=" << type << std::endl;
   std::ostringstream oss;
   std::streambuf *old_output_buffer = std::cout.rdbuf();
   std::cout.rdbuf(oss.rdbuf());
