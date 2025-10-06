@@ -62,6 +62,126 @@ void ReadMap() {
     }
   }
 }
+inline int unvisited_r1, unvisited_c1, unvisited_r2, unvisited_c2;
+
+inline void MarkUnvisited(int a, int b, bool type) {
+  if (!type) {
+    unvisited_r1 = a;
+    unvisited_c1 = b;
+  }
+  else {
+    unvisited_r2 = a;
+    unvisited_c2 = b;
+  }
+}
+
+inline bool MinusFormula() {
+  int dx[3] = {1, 0}, dy[3] = {0, 1}; 
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < columns; j++) {
+      if (client_map[i][j] == '?' || client_map[i][j] == '@' || client_map[i][j] == '0') continue;
+      for (int k = 0; k < 2; k++) {
+        // std::cout << "MinusFormula operating" << std::endl;
+        int mine_blocks_1 = 0, unknown_blocks_1 = 0;
+        int mine_blocks_2 = 0, unknown_blocks_2 = 0;
+        int i2 = i + dx[k], j2 = j + dy[k];
+        if (client_map[i2][j2] == '?' 
+         || client_map[i2][j2] == '@') continue; // unable to use minus formula
+        if (k == 0) { // vertically check
+          if (client_map[i - 1][j + 1] == '?') unknown_blocks_1++, MarkUnvisited(i - 1, j + 1, 0);
+          if (client_map[i - 1][j + 1] == '@') mine_blocks_1++;
+          if (client_map[i - 1][j - 1] == '?') unknown_blocks_1++, MarkUnvisited(i - 1, j - 1, 1);
+          if (client_map[i - 1][j - 1] == '@') mine_blocks_1++;
+          if (client_map[i - 1][j] == '?') unknown_blocks_1++, MarkUnvisited(i - 1, j, 0);
+          if (client_map[i - 1][j] == '@') mine_blocks_1++;
+          if (client_map[i2 + 1][j2 + 1] == '?') unknown_blocks_2++, MarkUnvisited(i2 + 1, j2 + 1, 1);
+          if (client_map[i2 + 1][j2 + 1] == '@') mine_blocks_2++;
+          if (client_map[i2 + 1][j2 - 1] == '?') unknown_blocks_2++, MarkUnvisited(i2 + 1, j2 - 1, 1);
+          if (client_map[i2 + 1][j2 - 1] == '@') mine_blocks_2++;
+          if (client_map[i2 + 1][j2] == '?') unknown_blocks_2++, MarkUnvisited(i2 + 1, j2, 1);
+          if (client_map[i2 + 1][j2] == '@') mine_blocks_2++;
+
+          int difference = (int)client_map[i][j] - (int)client_map[i2][j2] - (mine_blocks_1 - mine_blocks_2);
+          if (difference == 0) {
+            continue;
+          }
+          else if (difference > 0) {
+            // std::cout << "h_check" << std::endl;
+            // std::cout << "dif=" << difference << " i=" << i << " j=" << j <<" i2=" << i2 << " j2=" << j2
+                        // << " unknown_blocks_1=" << unknown_blocks_1 << " unknown_blocks_2=" << unknown_blocks_2
+                        // << " mine_blocks_1=" << mine_blocks_1 << " mine_blocks_2=" << mine_blocks_2
+                        // << std::endl;
+            if (difference == unknown_blocks_1) {
+              Execute(unvisited_r1, unvisited_c1, 1);
+              return 1;
+            }
+          }
+          else {
+            // std::cout << "h_check" << std::endl;
+            // std::cout << "dif=" << difference << " i=" << i << " j=" << j <<" i2=" << i2 << " j2=" << j2
+                        // << " unknown_blocks_1=" << unknown_blocks_1 << " unknown_blocks_2=" << unknown_blocks_2
+                        // << " mine_blocks_1=" << mine_blocks_1 << " mine_blocks_2=" << mine_blocks_2
+                        // << std::endl;
+            if (std::abs(difference) == unknown_blocks_2) {
+              
+              Execute(unvisited_r2, unvisited_c2, 1);
+              return 1;
+            }
+          }
+        }
+        else { // horizontally check
+          if (client_map[i - 1][j - 1] == '?') unknown_blocks_1++, MarkUnvisited(i - 1, j - 1, 0);
+          if (client_map[i - 1][j - 1] == '@') mine_blocks_1++;
+          if (client_map[i + 1][j - 1] == '?') unknown_blocks_1++, MarkUnvisited(i + 1, j - 1, 0);
+          if (client_map[i + 1][j - 1] == '@') mine_blocks_1++;
+          if (client_map[i][j - 1] == '?') unknown_blocks_1++, MarkUnvisited(i, j - 1, 0);
+          if (client_map[i][j - 1] == '@') mine_blocks_1++;
+          if (client_map[i2 - 1][j2 + 1] == '?') unknown_blocks_2++, MarkUnvisited(i2 - 1, j2 + 1, 1);
+          if (client_map[i2 - 1][j2 + 1] == '@') mine_blocks_2++;
+          if (client_map[i2 + 1][j2 + 1] == '?') unknown_blocks_2++, MarkUnvisited(i2 + 1, j2 + 1, 1);
+          if (client_map[i2 + 1][j2 + 1] == '@') mine_blocks_2++;
+          if (client_map[i2][j2 + 1] == '?') unknown_blocks_2++, MarkUnvisited(i2, j2 + 1, 1);
+          if (client_map[i2][j2 + 1] == '@') mine_blocks_2++;
+
+          // if (i == 1 && j == 1) {
+            // std::cout << unknown_blocks_1 << mine_blocks_1
+                      // << unknown_blocks_2 << mine_blocks_2 << std::endl;
+          // }
+           
+          int difference = (int)client_map[i][j] - (int)client_map [i2][j2] - (mine_blocks_1 - mine_blocks_2);
+          if (difference == 0) {
+            continue;
+          }
+          else if (difference > 0) {
+            // std::cout << "h_check" << std::endl;
+            // std::cout << "dif=" << difference << " i=" << i << " j=" << j
+                        // << " unknown_blocks_1=" << unknown_blocks_1 << " unknown_blocks_2=" << unknown_blocks_2
+                        // << " mine_blocks_1=" << mine_blocks_1 << " mine_blocks_2=" << mine_blocks_2
+                        // << std::endl;
+            if (difference == unknown_blocks_1) {
+              
+              Execute(unvisited_r1, unvisited_c1, 1);
+              return 1;
+            }
+          }
+          else {
+            //std::cout << "h_check" << std::endl;
+            //std::cout << "dif=" << difference << " i=" << i << " j=" << j
+            //            << " unknown_blocks_1=" << unknown_blocks_1 << " unknown_blocks_2=" << unknown_blocks_2
+             //           << " mine_blocks_1=" << mine_blocks_1 << " mine_blocks_2=" << mine_blocks_2
+                        // << std::endl;
+            if (std::abs(difference) == unknown_blocks_2) {
+              Execute(unvisited_r2, unvisited_c2, 1);
+              return 1;
+            }
+          }
+        }
+      }
+    }
+  }
+  return 0;
+}
+
 
 /**
  * @brief The definition of function Decide()
@@ -106,74 +226,11 @@ void Decide() {
       }
     }
   }
-/*
-  // minus formula
-  int d0x[5] = {0, 0 , -1, 1}, d0y[5] = {1, -1 , 0, 0};
-  for (int i = 0; i < rows - 1; i++) {
-    for (int j = 0; j < columns - 1; j++) {
-      if (client_map[i][j] == '?' || client_map[i][j] == '@') continue;
-      for (int k = 0; k < 5; k++) {
-        int mine_blocks_1 = 0, unknown_blocks_1 = 0;
-        int mine_blocks_2 = 0, unknown_blocks_2 = 0;
-        int unvisited_r, unvisited_c;
-        if (client_map[i + d0x[k]][j + d0y[k]] == '?' || client_map[i + d0x[k]][j + d0y[k]] == '@')
-        continue; // unable to use minus formula
-        if (k > 1) { // row
-          if (client_map[i - d0x[k]][j - d0y[k] + 1] == '?') unknown_blocks_1++;
-          if (client_map[i - d0x[k]][j - d0y[k]] == '?') unknown_blocks_1++;
-          if (client_map[i - d0x[k]][j - d0y[k] - 1] == '?') unknown_blocks_1++;
-          if (client_map[i - d0x[k]][j - d0y[k] + 1] == '@') mine_blocks_1++;
-          if (client_map[i - d0x[k]][j - d0y[k]] == '@') mine_blocks_1++;
-          if (client_map[i - d0x[k]][j - d0y[k] - 1] == '@') mine_blocks_1++;
-          if (client_map[i + 2 * d0x[k]][j - d0y[k] + 1] == '?') unknown_blocks_2++;
-          if (client_map[i + 2 * d0x[k]][j - d0y[k]] == '?') unknown_blocks_2++;
-          if (client_map[i + 2 * d0x[k]][j - d0y[k] - 1] == '?') unknown_blocks_2++;
-          if (client_map[i + 2 * d0x[k]][j - d0y[k] + 1] == '@') mine_blocks_2++;
-          if (client_map[i + 2 * d0x[k]][j - d0y[k]] == '@') mine_blocks_2++;
-          if (client_map[i + 2 * d0x[k]][j - d0y[k] - 1] == '@') mine_blocks_2++;
-        }
-        else { // column
-          if (client_map[i - d0x[k] + 1][j - d0y[k]] == '?') unknown_blocks_1++;
-          if (client_map[i - d0x[k]][j - d0y[k]] == '?') unknown_blocks_1++;
-          if (client_map[i - d0x[k] - 1][j - d0y[k]] == '?') unknown_blocks_1++;
-          if (client_map[i - d0x[k] + 1][j - d0y[k]] == '@') mine_blocks_1++;
-          if (client_map[i - d0x[k]][j - d0y[k]] == '@') mine_blocks_1++;
-          if (client_map[i - d0x[k] - 1][j - d0y[k]] == '@') mine_blocks_1++;
-          if (client_map[i + d0x[k] + 1][j + 2 * d0y[k]] == '?') unknown_blocks_2++;
-          if (client_map[i - d0x[k]][j + 2 * d0y[k]] == '?') unknown_blocks_2++;
-          if (client_map[i + d0x[k] - 1][j + 2 * d0y[k]] == '?') unknown_blocks_2++;
-          if (client_map[i + d0x[k] + 1][j + 2 * d0y[k]] == '@') mine_blocks_2++;
-          if (client_map[i + d0x[k]][j + 2 * d0y[k]] == '@') mine_blocks_2++;
-          if (client_map[i + d0x[k] - 1][j + 2 * d0y[k]] == '@') mine_blocks_2++;
-        }
-        if (client_map[i][j] == client_map[i + d0x[k]][j + d0y[k]]) { // the two sides are the same
-          if (unknown_blocks_2 == 0) {
-            if (k > 1) {
-              if (client_map[i - d0x[k]][j - d0y[k] + 1] == '?') Execute(i - d0x[k], j - d0y[k] + 1, 0);
-              else if (client_map[i - d0x[k]][j - d0y[k]] == '?') Execute(i - d0x[k], j - d0y[k], 0);
-              else if (client_map[i - d0x[k]][j - d0y[k] - 1] == '?') Execute(i - d0x[k], j - d0y[k] - 1, 0);
-            }
-            else {
-              if (client_map[i - d0x[k] + 1][j - d0y[k]] == '?') Execute(i - d0x[k] + 1, j - d0y[k], 0);
-              else if (client_map[i - d0x[k]][j - d0y[k]] == '?') Execute(i - d0x[k], j - d0y[k], 0);
-              else if (client_map[i - d0x[k] - 1][j - d0y[k]] == '?') Execute(i - d0x[k] - 1, j - d0y[k], 0);
-            }
-          }
-          else if (unknown_blocks_1 < unknown_blocks_2) {
-            //if (unknown_blocks_2 - unknown_blocks_1 <= (int)client_map[i][j] - client_map[i + d0x[k]][j + d0y[k]])
-          }
-        }
-        else if (client_map[i][j] > client_map[i + d0x[k]][j + d0y[k]]) { // the original one is bigger
 
-        }
-        else { // the latter one is bigger
-
-        }
-      }
-    }
+  if(!flag) { // get into MinusFormula
+    flag = flag | MinusFormula();
   }
-*/
-
+  //if(flag) std::cout << "good" << std::endl;
   std::srand(std::time(0)); // random
   while (!flag) { // random block
     int random_r = std::rand() % rows;
