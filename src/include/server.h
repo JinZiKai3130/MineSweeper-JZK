@@ -220,7 +220,7 @@ void ExitGame() {
     std::cout << visit_count << " " 
               << marked_mine_count << std::endl;
   }
-  exit(0);  // Exit the game immediately
+  // exit(0);  // Exit the game immediately
 }
 
 /**
