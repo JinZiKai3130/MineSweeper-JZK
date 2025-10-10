@@ -3,6 +3,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <string.h>
 
 /*
  * You may need to define some global variables for the information of the game map here.
@@ -32,6 +33,11 @@ int wrong_r, wrong_c; // the place where you got wrong
  * would be initialized, with all the blocks unvisited.
  */
 void InitMap() {
+  memset(vis, 0, sizeof(vis));
+  visit_count = 0, marked_mine_count = 0;
+  wrong_r = 0, wrong_c = 0;
+  total_mines = 0;
+  game_state = 0;
   std::cin >> rows >> columns;
   // TODO (student): Implement me!
   for (int i = 0; i < rows; i++) {

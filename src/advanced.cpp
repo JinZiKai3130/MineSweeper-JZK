@@ -94,6 +94,7 @@ void TestBatch() {
     std::istringstream iss(str);         // Redirect the input to the string, which stores the output recently
     std::streambuf *old_input_buffer = std::cin.rdbuf();
     std::cin.rdbuf(iss.rdbuf());
+    std::cerr << "TEST CASE " << i + 1 << ":" << std::endl;
     TestSingle();
     std::cin.rdbuf(old_input_buffer);
     game_state = 0;

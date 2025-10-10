@@ -90,7 +90,7 @@ inline bool MinusFormula() {
         if (k == 0) { // vertically check
           if (client_map[i - 1][j + 1] == '?') unknown_blocks_1++, MarkUnvisited(i - 1, j + 1, 0);
           if (client_map[i - 1][j + 1] == '@') mine_blocks_1++;
-          if (client_map[i - 1][j - 1] == '?') unknown_blocks_1++, MarkUnvisited(i - 1, j - 1, 1);
+          if (client_map[i - 1][j - 1] == '?') unknown_blocks_1++, MarkUnvisited(i - 1, j - 1, 0);
           if (client_map[i - 1][j - 1] == '@') mine_blocks_1++;
           if (client_map[i - 1][j] == '?') unknown_blocks_1++, MarkUnvisited(i - 1, j, 0);
           if (client_map[i - 1][j] == '@') mine_blocks_1++;
@@ -159,7 +159,6 @@ inline bool MinusFormula() {
                         // << " mine_blocks_1=" << mine_blocks_1 << " mine_blocks_2=" << mine_blocks_2
                         // << std::endl;
             if (difference == unknown_blocks_1) {
-              
               Execute(unvisited_r1, unvisited_c1, 1);
               return 1;
             }
