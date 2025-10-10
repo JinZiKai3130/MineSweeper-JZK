@@ -194,4 +194,5 @@ CMakeFiles/client.dir/advanced.o: \
  /usr/include/c++/13/pstl/glue_numeric_defs.h \
  /usr/include/c++/13/pstl/execution_defs.h \
  /mnt/e/GIT/MineSweeper-JZK/src/include/generator.h \
- /mnt/e/GIT/MineSweeper-JZK/src/include/server.h
+ /mnt/e/GIT/MineSweeper-JZK/src/include/server.h /usr/include/string.h \
+ /usr/include/strings.h

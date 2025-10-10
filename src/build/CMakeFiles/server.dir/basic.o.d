@@ -149,4 +149,5 @@ CMakeFiles/server.dir/basic.o: /mnt/e/GIT/MineSweeper-JZK/src/basic.cpp \
  /usr/include/c++/13/bits/basic_ios.tcc \
  /usr/include/c++/13/bits/ostream.tcc /usr/include/c++/13/istream \
  /usr/include/c++/13/bits/istream.tcc \
- /mnt/e/GIT/MineSweeper-JZK/src/include/server.h
+ /mnt/e/GIT/MineSweeper-JZK/src/include/server.h /usr/include/string.h \
+ /usr/include/strings.h

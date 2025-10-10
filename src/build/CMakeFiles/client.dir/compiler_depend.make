@@ -144,6 +144,8 @@ CMakeFiles/client.dir/advanced.o: /mnt/e/GIT/MineSweeper-JZK/src/advanced.cpp \
   /usr/include/stdint.h \
   /usr/include/stdio.h \
   /usr/include/stdlib.h \
+  /usr/include/string.h \
+  /usr/include/strings.h \
   /usr/include/time.h \
   /usr/include/wchar.h \
   /usr/include/wctype.h \
@@ -351,6 +353,8 @@ CMakeFiles/client.dir/advanced.o: /mnt/e/GIT/MineSweeper-JZK/src/advanced.cpp \
 
 /usr/include/x86_64-linux-gnu/asm/errno.h:
 
+/usr/include/string.h:
+
 /usr/include/stdlib.h:
 
 /usr/include/stdio.h:
@@ -392,6 +396,8 @@ CMakeFiles/client.dir/advanced.o: /mnt/e/GIT/MineSweeper-JZK/src/advanced.cpp \
 /usr/include/c++/13/bits/stl_algobase.h:
 
 /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h:
+
+/usr/include/strings.h:
 
 /usr/include/c++/13/bits/random.tcc:
 
