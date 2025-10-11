@@ -75,7 +75,14 @@ inline void MarkUnvisited(int a, int b, bool type) {
   }
 }
 
+inline bool check(int x_try, int y_try) {
+  if(x_try < 0 || x_try >= columns || y_try < 0 || y_try >= rows) return 0;
+  return 1;
+}
+
 inline bool MinusFormula() {
+
+
   int dx[3] = {1, 0}, dy[3] = {0, 1}; 
   for (int i = 0; i < rows; i++) {
     for (int j = 0; j < columns; j++) {
@@ -84,6 +91,7 @@ inline bool MinusFormula() {
         // std::cout << "MinusFormula operating" << std::endl;
         int mine_blocks_1 = 0, unknown_blocks_1 = 0;
         int mine_blocks_2 = 0, unknown_blocks_2 = 0;
+        unvisited_c1 = 0x3f3f3f3f, unvisited_c2 = 0x3f3f3f3f, unvisited_r1 = 0x3f3f3f3f, unvisited_r2 = 0x3f3f3f3f;
         int i2 = i + dx[k], j2 = j + dy[k];
         if (client_map[i2][j2] == '?' 
          || client_map[i2][j2] == '@') continue; // unable to use minus formula
@@ -103,7 +111,16 @@ inline bool MinusFormula() {
 
           int difference = (int)client_map[i][j] - (int)client_map[i2][j2] - (mine_blocks_1 - mine_blocks_2);
           if (difference == 0) {
-            continue;
+            if ((int)client_map[i][j] - (int)client_map[i2][j2] > 0) {
+              if(!check(unvisited_r2, unvisited_c2)) continue;
+              Execute(unvisited_r2, unvisited_c2, 0);
+              return 1;
+            }
+            if ((int)client_map[i][j] - (int)client_map[i2][j2] < 0) {
+              if(!check(unvisited_r1, unvisited_c1)) continue;
+              Execute(unvisited_r1, unvisited_c1, 0);
+              return 1;
+            }
           }
           else if (difference > 0) {
             // std::cout << "h_check" << std::endl;
@@ -123,7 +140,6 @@ inline bool MinusFormula() {
                         // << " mine_blocks_1=" << mine_blocks_1 << " mine_blocks_2=" << mine_blocks_2
                         // << std::endl;
             if (std::abs(difference) == unknown_blocks_2) {
-              
               Execute(unvisited_r2, unvisited_c2, 1);
               return 1;
             }
@@ -150,7 +166,16 @@ inline bool MinusFormula() {
            
           int difference = (int)client_map[i][j] - (int)client_map [i2][j2] - (mine_blocks_1 - mine_blocks_2);
           if (difference == 0) {
-            continue;
+            if ((int)client_map[i][j] - (int)client_map[i2][j2] > 0) {
+              if(!check(unvisited_r2, unvisited_c2)) continue;
+              Execute(unvisited_r2, unvisited_c2, 0);
+              return 1;
+            }
+            if ((int)client_map[i][j] - (int)client_map[i2][j2] < 0) {
+              if(!check(unvisited_r1, unvisited_c1)) continue;
+              Execute(unvisited_r1, unvisited_c1, 0);
+              return 1;
+            }
           }
           else if (difference > 0) {
             // std::cout << "h_check" << std::endl;
